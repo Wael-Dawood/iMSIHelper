@@ -44,35 +44,24 @@ void Logger::Log(LogLevel level, const TCHAR* message, ...)
 	const auto diag = LogLevel::Diagnostics;
 	const auto error = LogLevel::Error;
 
-
 	TCHAR* szBuff = NULL;
-
-
 	va_list vaList;
-
-
 	va_start(vaList, message);
 
 	int ibuffsize = _vsctprintf(message, vaList);
 	if (ibuffsize != 0)
 	{
 		++ibuffsize;
-
 		szBuff = new TCHAR[ibuffsize];
-
-
 		vswprintf_s(szBuff, ibuffsize, message, vaList);
-
+		
 		switch (level)
 		{
 		case info:
-
 			::MsiRecordSetString(m_hInstall, 0, szBuff);
 			MsiProcessMessage(m_hInstall, INSTALLMESSAGE_INFO, m_hInstall);
-
 			break;
 		case error:
-
 			::MsiRecordSetString(m_hInstall, 0, szBuff);
 			MsiProcessMessage(m_hInstall, INSTALLMESSAGE_ERROR, m_hInstall);
 			break;
@@ -80,21 +69,13 @@ void Logger::Log(LogLevel level, const TCHAR* message, ...)
 			::MsiRecordSetString(m_hInstall, 0, szBuff);
 			MsiProcessMessage(m_hInstall, ::INSTALLMESSAGE_ACTIONDATA, m_hInstall);
 			break;
-
 		case debug:
-
 			OutputDebugString(szBuff);
 			break;
-
 		}
-
-
 		va_end(vaList);
-
-		delete szBuff;
-		//send messages to  the debugger
+		delete szBuff;		
 	}
-
 }
 
 Logger::~Logger()
